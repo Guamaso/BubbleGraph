@@ -43,7 +43,6 @@ function bubble_graph( Raph, debug )
 		}
 	}
 
-
 	/** 
 	 * Creates Raphael shape based on data passed
 	 * @private
@@ -51,6 +50,38 @@ function bubble_graph( Raph, debug )
 	 * 
 	 */
 	function create_shape( shape_data )
+	{
+		//builds raphael shape
+		logger("build raph shape");
+		//TODO
+
+
+		return true;
+	}
+
+	/** 
+	 * Creates Raphael text based on data passed
+	 * @private
+	 * @return boolean True = shape created
+	 * 
+	 */
+	function create_text( shape_data )
+	{
+		//builds raphael shape
+		logger("build raph shape");
+		//TODO
+
+
+		return true;
+	}
+
+	/** 
+	 * Creates Raphael line based on data passed
+	 * @private
+	 * @return boolean True = shape created
+	 * 
+	 */
+	function create_line( shape_data )
 	{
 		//builds raphael shape
 		logger("build raph shape");
@@ -99,7 +130,7 @@ function bubble_graph( Raph, debug )
 	 * @return boolean true = done
 	 * 
 	 */
-	this.create_bubble = function( opts )
+	this.create_bubble = function( code, opts )
 	{
 		//constructor
 		this.dim = { r: 50, x : 50, y : 50 };
@@ -124,6 +155,19 @@ function bubble_graph( Raph, debug )
 		//constructor
 
 	}
+
+	/** 
+	 * Updates the attributes of a shape
+	 * @return boolean true = done
+	 * 
+	 */
+	this.update_shape = function( code, updated_attrs )
+	{
+		//constructor
+
+	}
+
+	
 
 	init.call( this, Raph, debug );
 
