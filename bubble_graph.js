@@ -13,7 +13,10 @@ function bubble_graph( Raph, debug )
 		if ( typeof debug == "undefined") var debug = false;
 		debug = ( typeof debug == "boolean" ) ? debug : false;
 	
+		//main Raphael object
 		this.Raph = Raph;
+		//shape storage
+		this.shapes = new Array();
 	
 	}
 	
@@ -49,7 +52,7 @@ function bubble_graph( Raph, debug )
 	 * @return boolean True = shape created
 	 * 
 	 */
-	function create_shape( shape_data )
+	function manage_shape( shape_data )
 	{
 		//builds raphael shape
 		logger("build raph shape");
@@ -65,10 +68,10 @@ function bubble_graph( Raph, debug )
 	 * @return boolean True = shape created
 	 * 
 	 */
-	function create_text( shape_data )
+	function manage_text( shape_data )
 	{
 		//builds raphael shape
-		logger("build raph shape");
+		logger("build raph text");
 		//TODO
 
 
@@ -81,10 +84,10 @@ function bubble_graph( Raph, debug )
 	 * @return boolean True = shape created
 	 * 
 	 */
-	function create_line( shape_data )
+	function manage_line( shape_data )
 	{
 		//builds raphael shape
-		logger("build raph shape");
+		logger("build raph line");
 		//TODO
 
 
@@ -99,6 +102,12 @@ function bubble_graph( Raph, debug )
 	 */
 	function check_shape_opts( options_to_check )
 	{
+		
+		this.dim = { r: 50, x : 50, y : 50 };
+		this.color = { border: "red", fill: "red" };
+		this.shape = 'circle';
+		this.position = { cx : 50, cy : 50 };
+
 		return options_to_check;
 	}
 
@@ -133,16 +142,16 @@ function bubble_graph( Raph, debug )
 	this.create_bubble = function( code, opts )
 	{
 		//constructor
-		this.dim = { r: 50, x : 50, y : 50 };
-		this.color = { border: "red", fill: "red" };
-		this.shape = 'circle';
-		this.position = { cx : 50, cy : 50 };
+		var shape_opts, shape_obj, response;
 
-
-
+		shape_opts = check_shape_opts.call(this, opts);
 
 		//init
-		create_shape.call(this, opts);
+		shape_obj = manage_shape.call(this, shape_opts);
+
+		response = (typeof shape_obj != "object" ) ? false : shape_obj ;
+
+		return response;
 	}
 
 	/** 
