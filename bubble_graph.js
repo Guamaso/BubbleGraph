@@ -7,9 +7,11 @@
 function bubble_graph( Raph, debug )
 {
 	this.db = new local_data( true );
+
 	//constructor
 	function init( Raph, debug )
 	{
+		var defaults;
 		if ( typeof debug == "undefined") var debug = false;
 		debug = ( typeof debug == "boolean" ) ? debug : false;
 	
@@ -17,6 +19,31 @@ function bubble_graph( Raph, debug )
 		this.Raph = ( typeof Raph != "undefined" ) ? Raph : Raphael( 0, 0, 600, 400);
 		//shape storage
 		this.shapes = new Array();
+
+		//defaults
+		this.defaults = {};
+		//xx,yy,r,cx,cy
+		defaults.xx = 0;
+		defaults.yy = 0;
+
+		defaults.r = 0;
+		defaults.cx = 0;
+		defaults.cy = 0;
+
+		//fill_color, stroke_color, line_weight
+		defaults.fill_color = "#444444";
+		defaults.stroke_color = "#444444";
+		defaults.line_weight = "12em";
+
+		//font_family, font_size, font_weight
+		defaults.font_family = "sans-serif";
+		defaults.font_size = "12px";
+		defaults.font_weight = "500";
+
+		//line_start.xx, line_start.yy, line_points[]
+		defaults.line_start.xx = 0;
+		defaults.line_start.xx = 0;
+		//defaults.line_points[] = ["xx":0,"yy":0];
 	
 	}
 	
@@ -56,18 +83,14 @@ function bubble_graph( Raph, debug )
 	{
 		//builds raphael shape
 		logger("build raph shape");
-		var verified_shape_data;
-
-		//check object
-		verified_shape_data = check_shape_opts(shape_data);
 		//create shape
-		this.shapes[code] = this.Raph.circle(verified_shape_data.xx, verified_shape_data.yy, verified_shape_data.r);
+		this.shapes[code] = this.Raph.circle(shape_data.xx, shape_data.yy, shape_data.r);
 		//set up fill
-		this.shapes[code].attr("fill", verified_shape_data.fill_color);
+		this.shapes[code].attr("fill", shape_data.fill_color);
 		//set up stroke
-		this.shapes[code].attr("stroke", verified_shape_data.stroke_color);
+		this.shapes[code].attr("stroke", shape_data.stroke_color);
 
-		return code;
+		return this.shapes[code];
 	}
 
 	/** 
@@ -80,22 +103,18 @@ function bubble_graph( Raph, debug )
 	{
 		//builds raphael shape
 		logger("build raph text");
-		var verified_shape_data;
-
-		//check object
-		verified_shape_data = check_shape_opts(shape_data);
 
 		//create text
-		this.shapes[code] = this.Raph.text(verified_shape_data.xx, verified_shape_data.yy, verified_shape_data.out_text);
+		this.shapes[code] = this.Raph.text(shape_data.xx, shape_data.yy, shape_data.out_text);
 
 		//set up color
-		this.shapes[code].attr("fill", verified_shape_data.fill_color);
+		this.shapes[code].attr("fill", shape_data.fill_color);
 		//set up font family
-		this.shapes[code].attr("font-family", verified_shape_data.font_family );
+		this.shapes[code].attr("font-family", shape_data.font_family );
 		//set up font size
-		this.shapes[code].attr("font-size", verified_shape_data.font_size );
+		this.shapes[code].attr("font-size", shape_data.font_size );
 		//set up line weight
-		this.shapes[code].attr("font-weight", verified_shape_data.font_weight );
+		this.shapes[code].attr("font-weight", shape_data.font_weight );
 
 		return code;
 	}
@@ -110,16 +129,14 @@ function bubble_graph( Raph, debug )
 	{
 		//builds raphael shape
 		logger("build raph line");
-		var verified_shape_data, line_string, line_points;
+		var line_string, line_points;
 
-		//check object
-		verified_shape_data = check_shape_opts(shape_data);
 		//line start
-		line_string = 'M ' + verified_shape_data.line_start.xx + ' ' + verified_shape_data.line_start.yy;
+		line_string = 'M ' + shape_data.line_start.xx + ' ' + shape_data.line_start.yy;
 		//copy line points to local var
-		line_points = verified_shape_data.line_points;
+		line_points = shape_data.line_points;
 		//loop through line points
-		for ( point as line_points )
+		for ( point in line_points )
 		{
 			//add line point
 			line_string = line_string + ' l ' + line_points[point]["xx"] + ' ' + line_points[point]["yy"];
@@ -131,9 +148,9 @@ function bubble_graph( Raph, debug )
 
 		this.shapes[code].attr(
 		{
-			fill: verified_shape_data.fill_color
-			, stroke: verified_shape_data.stroke_color
-			, 'stroke-width': verified_shape_data.line_weight
+			fill: shape_data.fill_color
+			, stroke: shape_data.stroke_color
+			, 'stroke-width': shape_data.line_weight
 		});  
 
 		return code;
@@ -147,11 +164,40 @@ function bubble_graph( Raph, debug )
 	 */
 	function check_shape_opts( options_to_check )
 	{
-		
-		this.dim = { r: 50, xx : 50, yy : 50 };
-		this.color = { border: "red", fill: "red" };
-		this.shape = 'circle';
-		this.position = { cx : 50, cy : 50 };
+		//primary check
+		if ( typeof options_to_check != "object" ) var options_to_check = {};
+		var checked_opts, defaults;
+		defaults = this.defaults;
+
+		//check shape type
+		checked_opts.shape_type = ( options_to_check.shape_type.length == 0 ) ? defaults.shape_type : options_to_check.shape_type;
+		//xx,yy,r,cx,cy
+		checked_opts.xx = ( options_to_check.xx.length == 0 ) ? defaults.xx : options_to_check.xx;
+		checked_opts.yy = ( options_to_check.yy.length == 0 ) ? defaults.yy : options_to_check.yy;
+		checked_opts.cx = ( options_to_check.cx.length == 0 ) ? defaults.cx : options_to_check.cx;
+		checked_opts.cy = ( options_to_check.cx.length == 0 ) ? defaults.cy : options_to_check.cx;
+		checked_opts.r = ( options_to_check.r.length == 0 ) ? defaults.r : options_to_check.r;
+
+		//fill_color, stroke_color, line_weight
+		checked_opts.fill_color = ( options_to_check.fill_color.length == 0 ) ? defaults.fill_color : options_to_check.fill_color;
+		checked_opts.stroke_color = ( options_to_check.stroke_color.length == 0 ) ? defaults.stroke_color : options_to_check.stroke_color;
+		checked_opts.line_weight = ( options_to_check.line_weight.length == 0 ) ? defaults.line_weight : options_to_check.line_weight;
+
+		//font_family, font_size, font_weight
+		checked_opts.font_family = ( options_to_check.font_family.length == 0 ) ? defaults.font_family : options_to_check.font_family;
+		checked_opts.font_size = ( options_to_check.font_size.length == 0 ) ? defaults.font_size : options_to_check.font_size;
+		checked_opts.font_weight = ( options_to_check.font_weight.length == 0 ) ? defaults.font_weight : options_to_check.font_weight;
+		//line_start.xx, line_start.yy, line_points[]
+		if ( options_to_check.line_start.length == 0 )
+		{
+			checked_opts.line_start = defaults.line_start;
+		}
+		else
+		{
+			checked_opts.line_start.xx = ( options_to_check.line_start.xx.length == 0 ) ? defaults.line_start.xx : options_to_check.line_start.xx;
+			checked_opts.line_start.yy = ( options_to_check.line_start.yy.length == 0 ) ? defaults.line_start.yy : options_to_check.line_start.yy;
+		}
+		checked_opts.line_points = ( options_to_check.line_points.length == 0 ) ? defaults.line_points : options_to_check.line_points;
 
 		return options_to_check;
 	}
@@ -189,11 +235,12 @@ function bubble_graph( Raph, debug )
 		//constructor
 		var shape_opts, shape_obj, response;
 
-		shape_opts = check_shape_opts.call(this, opts);
+		shape_opts = check_shape_opts( opts );
 
 		//init
-		shape_obj = manage_shape.call(this, shape_opts);
-
+		shape_obj = manage_shape.call(this, code, shape_opts);
+		//attempt at returning error
+		//not sure if I like this...
 		response = (typeof shape_obj != "object" ) ? false : shape_obj ;
 
 		return response;
