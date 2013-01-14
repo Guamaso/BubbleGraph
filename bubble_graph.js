@@ -73,6 +73,33 @@ function bubble_graph( Raph, debug )
 		}
 	}
 
+	/**
+	 * @private
+	 * @name check_shape_attr
+	 * @param code (string) Shape object code
+	 * @param attr_name (string) Attribute name
+	 * @return Check status of shape
+	 */
+	 function check_shape_attr( code, attr_name )
+	 {
+	 	var cur_obj, value_in_array;
+	 	//@todo test in all newer browsers
+	 	value_in_array = this.shapes.indexOf(code);
+	 	//return attr status
+	 	if ( value_in_array != -1 )
+	 	{
+	 		cur_obj = this.shapes[code];
+
+	 		cur_attr = (cur_obj.hasOwnProperty(attr_name) ) ? cur_obj[attr_name] : null;
+	 	}
+	 	else
+	 	{
+	 		cur_attr = null;
+	 	}
+
+	 	return cur_attr;
+	 }
+
 	/** 
 	 * Creates Raphael shape based on data passed
 	 * @private
@@ -239,7 +266,11 @@ function bubble_graph( Raph, debug )
 
 		//init
 		shape_obj = manage_shape.call(this, code, shape_opts);
-		//attempt at returning error
+
+		//create text
+		shape_obj = manage_text.call(this, code, shape_opts);		
+
+		//@todo attempt at returning error
 		//not sure if I like this...
 		response = (typeof shape_obj != "object" ) ? false : shape_obj ;
 
