@@ -284,8 +284,55 @@ function bubble_graph( Raph, debug )
 	 */
 	this.connect_bubble = function( objects_to_connect )
 	{
-		//constructor
+		//get shape objects
+		/*
+		object example
 
+		{
+			"sets":
+			[
+				{
+					"parent":"MEH"
+					, "children":["A","B","C"]
+				}
+			]
+		}
+
+		*/
+		var parent_obj, children_obj, this_set, points_obj;
+		for(set in objects_to_connect)
+		{
+			this_set = objects_to_connect[set];
+			//get parent object
+			parent_obj = this.shapes[this_set["parent"]];
+
+			//get first center pt, save pts to object
+			points_obj.parent_shape.cx = parent_obj.attr("cx");
+			points_obj.parent_shape.cy = parent_obj.attr("cy");
+
+			//get children points
+			for(child in this_set["children"])
+			{
+				children_obj.push(this.shapes[this_set["children"][child]]);	
+
+				//get children center pts, save pts to object
+
+				//make sure line weight is not greater than shape diameter/width
+
+				//create line(s)
+				MEH = manage_line.call(this, CODE_NAME, LINE_POINTS);
+			
+			}
+			
+
+			//clear
+			this_set = null;
+			parent_obj = null;
+			children_obj = null;
+
+		}
+
+		return true;
 	}
 
 	/** 
