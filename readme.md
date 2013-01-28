@@ -14,3 +14,4 @@ I also have a dependency on a local storage wrapper, but it's only used for debu
 Update Notes:
 - *12/20/2012*  Created original protoype version (mainly to learn Raphael). Worked, but with no collision detection and no encapsulation. This version was not captured in git.
 - *12/28/2012*  Recreated layout of code.
+- *01/27/2012*  Updated main methods. Updated utility methods. Created simple test. Debugging and updating. Probably worth calling this an alpha release. Yay!
