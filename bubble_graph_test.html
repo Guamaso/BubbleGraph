@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Raphael Test</title>
+	<script type="text/javascript" src="http://api.jzo.me/raphael/raphael-min.js"></script>
+	<script type="text/javascript" src="http://api.jzo.me/jquery/jquery-1.8.3.min.js"></script>
+	<style>
+		body {font-family:sans-serif;}
+		h1 {}
+	</style>
+</head>
+<body>
+
+<h1>Bubble Graph Test</h1>
+<p>Bubble Graph is a wrapper for RaphealJS that makes creating a bubble chart a little easier. Currently alpha. ;)</p>
+
+<div id="test"></div>
+
+<script type="text/javascript">                                         
+$(document).ready(function(){
+	console.log("Scripts loaded, queue bubble graph.");
+	//set the JSON
+	json_url = '/alpha_dev/BubbleGraph/test_data.json';
+	$.get(
+		json_url 
+		,  function(resp)
+		{ 
+			//ini the graph
+			set_up(resp);
+		}
+	);
+
+});
+
+function set_up( resp )
+{
+	var R = Raphael( 10, 100, 600, 400)
+	var this_graph = new Bubble_Graph(R);
+	console.log( resp );
+	console.log( "Creating shapes" );
+	opts = { "xx":200, "yy": 100, "r":60, "out_text" : "Parent Bubble"};
+	this_graph.create_bubble( "par_1", opts );
+	opts = { "xx":300, "yy": 210, "r":40, "out_text" : "Child 1"};
+	this_graph.create_bubble( "chi_1", opts );
+	opts = { "xx":115, "yy": 300, "r":40, "out_text" : "Child 2"};
+	this_graph.create_bubble( "chi_2", opts );
+	opts =
+	{
+		"sets":
+		[
+			{
+				"parent":"par_1"
+				, "children":["chi_1","chi_2"]
+			}
+		]
+	};
+	this_graph.connect_bubble(opts);
+
+}
+
+</script>
+<!--	<script type="text/javascript" src="http://juanorozco.com/sandbox/raph_test/bubble_graph.js"></script>-->
+	<script type="text/javascript" src="bubble_graph.js"></script>
+</body>
+</html>

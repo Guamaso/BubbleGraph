@@ -4,19 +4,21 @@
 
 
 
-function bubble_graph( Raph, debug )
+function Bubble_Graph( Raph, debug )
 {
-	this.db = new local_data( true );
-
+	//this.db = new local_data( true );
+	this.db = '';
+	var defaults = '';
 	//constructor
 	function init( Raph, debug )
 	{
-		var defaults;
+		defaults = {};
 		if ( typeof debug == "undefined") var debug = false;
 		debug = ( typeof debug == "boolean" ) ? debug : false;
 	
 		//main Raphael object
 		this.Raph = ( typeof Raph != "undefined" ) ? Raph : Raphael( 0, 0, 600, 400);
+
 		//shape storage
 		this.shapes = new Array();
 
@@ -30,21 +32,27 @@ function bubble_graph( Raph, debug )
 		defaults.cx = 0;
 		defaults.cy = 0;
 
+		//text
+		defaults.out_text = '';
+		defaults.text_color = '#ffffff';
+
 		//fill_color, stroke_color, line_weight
 		defaults.fill_color = "#444444";
 		defaults.stroke_color = "#444444";
-		defaults.line_weight = "12em";
+		defaults.line_weight = "3px";
 
 		//font_family, font_size, font_weight
 		defaults.font_family = "sans-serif";
-		defaults.font_size = "12px";
+		defaults.font_size = "10px";
 		defaults.font_weight = "500";
 
 		//line_start.xx, line_start.yy, line_points[]
+		defaults.line_start = {};
 		defaults.line_start.xx = 0;
-		defaults.line_start.xx = 0;
+		defaults.line_start.yy = 0;
 		//defaults.line_points[] = ["xx":0,"yy":0];
-	
+
+		this.defaults = defaults;
 	}
 	
 	/**
@@ -130,12 +138,12 @@ function bubble_graph( Raph, debug )
 	{
 		//builds raphael shape
 		logger("build raph text");
-
+		logger(shape_data.out_text);
 		//create text
 		this.shapes[code] = this.Raph.text(shape_data.xx, shape_data.yy, shape_data.out_text);
 
 		//set up color
-		this.shapes[code].attr("fill", shape_data.fill_color);
+		this.shapes[code].attr("fill", shape_data.text_color);
 		//set up font family
 		this.shapes[code].attr("font-family", shape_data.font_family );
 		//set up font size
@@ -159,25 +167,28 @@ function bubble_graph( Raph, debug )
 		var line_string, line_points;
 
 		//line start
-		line_string = 'M ' + shape_data.line_start.xx + ' ' + shape_data.line_start.yy;
+		line_string = 'M' + shape_data.line_start.xx + ',' + shape_data.line_start.yy;
 		//copy line points to local var
 		line_points = shape_data.line_points;
 		//loop through line points
 		for ( point in line_points )
 		{
 			//add line point
-			line_string = line_string + ' l ' + line_points[point]["xx"] + ' ' + line_points[point]["yy"];
+			line_string = line_string + 'L' + line_points[point]["xx"] + ',' + line_points[point]["yy"];
 		}
 		//line end
-		line_string = line_string + ' z';
+		line_string = line_string + 'Z';
+		logger(line_string);
 		//create line
-		this.shapes[code] = this.Raph.path( line_string );
+		this.shapes[code] = this.Raph.path( line_string ).toBack();
+
+		console.log(this.shapes[code]);
 
 		this.shapes[code].attr(
 		{
-			fill: shape_data.fill_color
-			, stroke: shape_data.stroke_color
-			, 'stroke-width': shape_data.line_weight
+			"fill" : "none"
+			, "stroke" : shape_data.attrs.stroke_color
+			, 'stroke-width': shape_data.attrs.line_weight
 		});  
 
 		return code;
@@ -193,40 +204,48 @@ function bubble_graph( Raph, debug )
 	{
 		//primary check
 		if ( typeof options_to_check != "object" ) var options_to_check = {};
-		var checked_opts, defaults;
-		defaults = this.defaults;
-
+		var checked_opts;
+		defaults = defaults;
+		if ( typeof options_to_check.shape_type == "undefined" )
+		{
+			options_to_check.shape_type	 = {};
+		}
+		checked_opts = {};
 		//check shape type
 		checked_opts.shape_type = ( options_to_check.shape_type.length == 0 ) ? defaults.shape_type : options_to_check.shape_type;
 		//xx,yy,r,cx,cy
-		checked_opts.xx = ( options_to_check.xx.length == 0 ) ? defaults.xx : options_to_check.xx;
-		checked_opts.yy = ( options_to_check.yy.length == 0 ) ? defaults.yy : options_to_check.yy;
-		checked_opts.cx = ( options_to_check.cx.length == 0 ) ? defaults.cx : options_to_check.cx;
-		checked_opts.cy = ( options_to_check.cx.length == 0 ) ? defaults.cy : options_to_check.cx;
-		checked_opts.r = ( options_to_check.r.length == 0 ) ? defaults.r : options_to_check.r;
+		checked_opts.xx = ( options_to_check.hasOwnProperty("xx") ) ? options_to_check.xx : defaults.xx;
+		checked_opts.yy = ( options_to_check.hasOwnProperty("yy") ) ? options_to_check.yy : defaults.yy;
+		checked_opts.cx = ( options_to_check.hasOwnProperty("cx") ) ? options_to_check.cx : defaults.cx;
+		checked_opts.cy = ( options_to_check.hasOwnProperty("cy") ) ? options_to_check.cy : defaults.cy;
+		checked_opts.r = ( options_to_check.hasOwnProperty("r") ) ? options_to_check.r : defaults.r;
+
+		//text
+		checked_opts.out_text = ( options_to_check.hasOwnProperty("out_text") ) ? options_to_check.out_text : defaults.out_text;
+		checked_opts.text_color = ( options_to_check.hasOwnProperty("text_color") ) ? options_to_check.text_color : defaults.text_color;
 
 		//fill_color, stroke_color, line_weight
-		checked_opts.fill_color = ( options_to_check.fill_color.length == 0 ) ? defaults.fill_color : options_to_check.fill_color;
-		checked_opts.stroke_color = ( options_to_check.stroke_color.length == 0 ) ? defaults.stroke_color : options_to_check.stroke_color;
-		checked_opts.line_weight = ( options_to_check.line_weight.length == 0 ) ? defaults.line_weight : options_to_check.line_weight;
+		checked_opts.fill_color = ( options_to_check.hasOwnProperty("fill_color") ) ? options_to_check.fill_color : defaults.fill_color;
+		checked_opts.stroke_color = ( options_to_check.hasOwnProperty("stroke_color") ) ? options_to_check.stroke_color : defaults.stroke_color;
+		checked_opts.line_weight = ( options_to_check.hasOwnProperty("line_weight") ) ? options_to_check.line_weight : defaults.line_weight;
 
 		//font_family, font_size, font_weight
-		checked_opts.font_family = ( options_to_check.font_family.length == 0 ) ? defaults.font_family : options_to_check.font_family;
-		checked_opts.font_size = ( options_to_check.font_size.length == 0 ) ? defaults.font_size : options_to_check.font_size;
-		checked_opts.font_weight = ( options_to_check.font_weight.length == 0 ) ? defaults.font_weight : options_to_check.font_weight;
+		checked_opts.font_family = ( options_to_check.hasOwnProperty("font_family") ) ? options_to_check.font_family : defaults.font_family;
+		checked_opts.font_size = ( options_to_check.hasOwnProperty("font_size") ) ? options_to_check.font_size : defaults.font_size;
+		checked_opts.font_weight = ( options_to_check.hasOwnProperty("font_weight") ) ? options_to_check.font_weight : defaults.font_weight;
 		//line_start.xx, line_start.yy, line_points[]
-		if ( options_to_check.line_start.length == 0 )
+		if ( !(options_to_check.hasOwnProperty("line_start")) )
 		{
 			checked_opts.line_start = defaults.line_start;
 		}
 		else
 		{
-			checked_opts.line_start.xx = ( options_to_check.line_start.xx.length == 0 ) ? defaults.line_start.xx : options_to_check.line_start.xx;
-			checked_opts.line_start.yy = ( options_to_check.line_start.yy.length == 0 ) ? defaults.line_start.yy : options_to_check.line_start.yy;
+			checked_opts.line_start.xx = ( options_to_check.line_start.hasOwnProperty("xx") ) ? options_to_check.line_start.xx : defaults.line_start.xx;
+			checked_opts.line_start.yy = ( options_to_check.line_start.hasOwnProperty("yy") ) ? options_to_check.line_start.yy : defaults.line_start.yy;
 		}
-		checked_opts.line_points = ( options_to_check.line_points.length == 0 ) ? defaults.line_points : options_to_check.line_points;
+		checked_opts.line_points = ( options_to_check.hasOwnProperty("line_points") ) ? options_to_check.line_points : defaults.line_points;
 
-		return options_to_check;
+		return checked_opts;
 	}
 
 	/** 
@@ -296,31 +315,50 @@ function bubble_graph( Raph, debug )
 					, "children":["A","B","C"]
 				}
 			]
+			, "attrs" :
+			{}
 		}
 
 		*/
-		var parent_obj, children_obj, this_set, points_obj;
-		for(set in objects_to_connect)
+
+		var parent_obj, cur_child, this_set, points_obj, line_code, opts;
+
+
+		for(set in objects_to_connect.sets)
 		{
-			this_set = objects_to_connect[set];
+			points_obj = {};
+			points_obj.attrs = (objects_to_connect.hasOwnProperty("attrs") ) ? objects_to_connect.attrs : defaults ;
+
+			this_set = objects_to_connect.sets[set];
 			//get parent object
 			parent_obj = this.shapes[this_set["parent"]];
-
+			console.log(parent_obj);
 			//get first center pt, save pts to object
-			points_obj.parent_shape.cx = parent_obj.attr("cx");
-			points_obj.parent_shape.cy = parent_obj.attr("cy");
+			points_obj.line_start = {};
+			points_obj.line_start.xx = parent_obj.attr("x");
+			points_obj.line_start.yy = parent_obj.attr("y");
+
+			points_obj.line_points = [];
 
 			//get children points
 			for(child in this_set["children"])
 			{
-				children_obj.push(this.shapes[this_set["children"][child]]);	
+				cur_child = this.shapes[this_set["children"][child]];
+
+				console.log(cur_child);
+
+				line_code = this_set["parent"] + "_to_" + this_set["children"][child];
 
 				//get children center pts, save pts to object
+				opts = { "xx" : cur_child.attr("x"), "yy" : cur_child.attr("y") };
+				points_obj.line_points.push( opts );
+				console.log(points_obj)
 
-				//make sure line weight is not greater than shape diameter/width
+				//@TODO make sure line weight is not greater than shape diameter/width
 
 				//create line(s)
-				MEH = manage_line.call(this, CODE_NAME, LINE_POINTS);
+				MEH = manage_line.call(this, line_code, points_obj);
+				points_obj.line_points.length = 0;
 			
 			}
 			
@@ -351,8 +389,3 @@ function bubble_graph( Raph, debug )
 	init.call( this, Raph, debug );
 
 }
-
-
-//TESTING:
-var canvas = Raphael( "test", 600, 600 );
-var test = new bubble_graph( canvas, true );
