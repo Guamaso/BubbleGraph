@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<link href='http://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
 	<title>Raphael Test</title>
 	<script type="text/javascript" src="http://api.jzo.me/raphael/raphael-min.js"></script>
-	<script type="text/javascript" src="http://api.jzo.me/jquery/jquery-1.8.3.min.js"></script>
-	<script type="text/javascript" src="https://raw.github.com/Guamaso/BubbleGraph/master/bubble_graph.js"></script>
-	<!--<script type="text/javascript" src="bubble_graph.js"></script>-->
+	<!--<script type="text/javascript" src="https://raw.github.com/Guamaso/BubbleGraph/master/bubble_graph.js"></script>-->
+	<script type="text/javascript" src="bubble_graph.js"></script>
 	<style>
-		body {font-family:sans-serif;}
+		body {font-family: 'Architects Daughter', cursive;}
 		h1 {}
+		#skillz {border: 1px solid #dddddd; background-color: #EDECD1; margin: 20px;}
 	</style>
 </head>
 <body>
@@ -16,50 +17,187 @@
 <h1>Bubble Graph Test</h1>
 <p>Bubble Graph is a wrapper for RaphealJS that makes creating a bubble chart a little easier. Currently alpha. ;)</p>
 
-<div id="test"></div>
+<div id="familia"></div>
 
+<p>Personal skill assessment, 2013</p>
+
+<div id="skillz"></div>
+<ul>
+	<li>The line thickness represents my skill level.</li>
+	<li>The distance between me and the subject represents my interest level.</li>
+	<li>The size of the circle represents how much time I get to spend on that subject.</li>
+	<li>Brown are client side languages, blue are server side languages, purple are DB languages (ish).</li>
+</ul>
+<p>Code:</p>
+<pre>
+	var R2 = Raphael( "skillz", 800, 550)
+	//Bubble Graph creates it's own instance of Raphael if you don't pass it.
+	var skillz = new Bubble_Graph(R2);
+
+	//Create Me bubble
+	//declares the options required for the bubble
+	opts = { "xx":300, "yy": 300, "r":80, "out_text" : "Juan Orozco\nDeveloper", "font_size" : "16px", "fill_color" : "#3C7531"};
+	//creates the bubble
+	skillz.create_bubble( "juan", opts );
+
+	//create all of my interests (subjects)
+	opts = { "xx":290, "yy": 140, "r":50, "out_text" : "JavaScript", "font_size" : "14px", "fill_color" : "#543626"};
+	skillz.create_bubble( "js", opts );
+	opts = { "xx":200, "yy": 50, "r":35, "out_text" : "jQuery / \njQuery UI", "font_size" : "10px", "fill_color" : "#543626"};
+	skillz.create_bubble( "jquery", opts );
+	opts = { "xx":328, "yy": 55, "r":20, "out_text" : "Node\nJS", "font_size" : "10px", "fill_color" : "#543626"};
+	skillz.create_bubble( "nodejs", opts );
+	opts = { "xx":175, "yy": 180, "r":35, "out_text" : "HTML", "font_size" : "14px", "fill_color" : "#543626"};
+	skillz.create_bubble( "html", opts );
+	opts = { "xx":145, "yy": 267, "r":30, "out_text" : "CSS", "font_size" : "14px", "fill_color" : "#543626"};
+	skillz.create_bubble( "css", opts );
+	opts = { "xx":520, "yy": 208, "r": 60, "out_text" : "PHP", "font_size" : "14px", "fill_color" : "#264454" };
+	skillz.create_bubble( "php", opts );
+	opts = { "xx":710, "yy": 328, "r": 20, "out_text" : "Dot Net\n(ASP, VB)", "font_size" : "8px", "fill_color" : "#264454" };
+	skillz.create_bubble( "net", opts );
+	opts = { "xx":380, "yy": 160, "r": 25, "out_text" : "Ruby", "font_size" : "14px", "fill_color" : "#264454" };
+	skillz.create_bubble( "ruby", opts );
+	opts = { "xx":430, "yy": 135, "r":25, "out_text" : "Ruby \non Rails", "font_size" : "10px", "fill_color" : "#264454" };
+	skillz.create_bubble( "rails", opts );
+	opts = { "xx":690, "yy": 380, "r":20, "out_text" : "Python", "font_size" : "10px", "fill_color" : "#264454" };
+	skillz.create_bubble( "python", opts );
+	opts = { "xx":760, "yy": 280, "r":20, "out_text" : "Pascal \n/Delphi", "font_size" : "10px", "fill_color" : "#264454" };
+	skillz.create_bubble( "pascal", opts );
+	opts = { "xx":500, "yy": 500, "r": 20, "out_text" : "T-SQL", "font_size" : "10px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "tsql", opts );
+	opts = { "xx":280, "yy": 480, "r": 50, "out_text" : "MySQL", "font_size" : "14px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "mysql", opts );
+	opts = { "xx":200, "yy": 400, "r": 25, "out_text" : "Neo4J", "font_size" : "13px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "neo4j", opts );
+	opts = { "xx":720, "yy": 480, "r": 50, "out_text" : "4D\n(SQL)", "font_size" : "13px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "4d", opts );
+	opts = { "xx":110, "yy": 380, "r": 50, "out_text" : "R", "font_size" : "14px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "r", opts );
+
+	//Connect all the things
+	skillz.connect_bubble("juan",["js","php","mysql"], { "line_weight" : "20px"});
+	skillz.connect_bubble("juan",["css","html","pascal","tsql","4d"], { "line_weight" : "10px"});
+	skillz.connect_bubble("juan",["r","net"], { "line_weight" : "5px"});
+	skillz.connect_bubble("juan",["ruby","python","neo4j"], { "line_weight" : "2px"});
+	//connect all the sub things
+	skillz.connect_bubble("js", "jquery", { "line_weight" : "18px"});
+	skillz.connect_bubble("js", "nodejs", { "line_weight" : "5px"});
+	skillz.connect_bubble("ruby", "rails", { "line_weight" : "1px"});
+</pre>
 <script type="text/javascript">                                         
-$(document).ready(function(){
-	console.log("Scripts loaded, queue bubble graph.");
-	//set the JSON
-	json_url = '/alpha_dev/BubbleGraph/test_data.json';
-	$.get(
-		json_url 
-		,  function(resp)
-		{ 
-			//ini the graph
-			set_up(resp);
-		}
-	);
 
-});
 
 function set_up( resp )
 {
-	var R = Raphael( 10, 100, 600, 400)
-	var this_graph = new Bubble_Graph(R);
+	var R = Raphael( "familia", 600, 600)
+	var my_family = new Bubble_Graph(R);
 	console.log( resp );
 	console.log( "Creating shapes" );
-	opts = { "xx":200, "yy": 100, "r":60, "out_text" : "Parent Bubble"};
-	this_graph.create_bubble( "par_1", opts );
-	opts = { "xx":300, "yy": 210, "r":40, "out_text" : "Child 1"};
-	this_graph.create_bubble( "chi_1", opts );
-	opts = { "xx":115, "yy": 300, "r":40, "out_text" : "Child 2"};
-	this_graph.create_bubble( "chi_2", opts );
+	opts = { "xx":80, "yy": 200, "r":60, "out_text" : "Juan", "font_size" : "16px", "fill_color" : "#2EC953"};
+	my_family.create_bubble( "juan", opts );
+
+	opts = { "xx":300, "yy": 200, "r":60, "out_text" : "Ciri", "font_size" : "16px", "fill_color" : "#A82EC9"};
+	my_family.create_bubble( "ciri", opts );
+
+	opts = { "xx":150, "yy": 50, "r":40, "out_text" : "Jonas"};
+	my_family.create_bubble( "dood", opts );
+
+	opts = { "xx":150, "yy": 350, "r":40, "out_text" : "Izabella"};
+	my_family.create_bubble( "bean", opts );
+
+	opts = { "xx":500, "yy": 400, "r":20, "out_text" : "Timber"};
+	my_family.create_bubble( "the_dog", opts );
+
+	//to create connections, there are a few ways...
+
+	//The all-in-one-shot way...
 	opts =
 	{
 		"sets":
 		[
 			{
-				"parent":"par_1"
-				, "children":["chi_1","chi_2"]
+				"parent":"ciri"
+				, "children":["bean","dood"]
+				, "attrs" :
+				{
+					"line_weight" : "5px"
+					,"stroke_color" : "#721E8A"
+				}
+			}
+			,{
+				"parent":"juan"
+				, "children":["ciri"]
+				, "attrs" :
+				{
+					"line_weight" : "10px"
+				}
 			}
 		]
 	};
-	this_graph.connect_bubble(opts);
+	my_family.connect_bubble( opts );
+	//one set at a time way...
+	my_family.connect_bubble("juan",["bean","dood"]);
+	//and the one connection at a time way...
+	my_family.connect_bubble("ciri","the_dog");
 
 }
+//trigger process
+	set_up('');
 
+
+	var R2 = Raphael( "skillz", 800, 550)
+	//Bubble Graph creates it's own instance of Raphael if you don't pass it.
+	var skillz = new Bubble_Graph(R2);
+
+	//Create Me bubble
+
+	//declares the options required for the bubble
+	opts = { "xx":300, "yy": 300, "r":80, "out_text" : "Juan Orozco\nDeveloper", "font_size" : "16px", "fill_color" : "#3C7531"};
+	//creates the bubble
+	skillz.create_bubble( "juan", opts );
+	//create all of my interests (subjects)
+	opts = { "xx":290, "yy": 140, "r":50, "out_text" : "JavaScript", "font_size" : "14px", "fill_color" : "#543626"};
+	skillz.create_bubble( "js", opts );
+	opts = { "xx":200, "yy": 50, "r":35, "out_text" : "jQuery / \njQuery UI", "font_size" : "10px", "fill_color" : "#543626"};
+	skillz.create_bubble( "jquery", opts );
+	opts = { "xx":328, "yy": 55, "r":20, "out_text" : "Node\nJS", "font_size" : "10px", "fill_color" : "#543626"};
+	skillz.create_bubble( "nodejs", opts );
+	opts = { "xx":175, "yy": 180, "r":35, "out_text" : "HTML", "font_size" : "14px", "fill_color" : "#543626"};
+	skillz.create_bubble( "html", opts );
+	opts = { "xx":145, "yy": 267, "r":30, "out_text" : "CSS", "font_size" : "14px", "fill_color" : "#543626"};
+	skillz.create_bubble( "css", opts );
+	opts = { "xx":520, "yy": 208, "r": 60, "out_text" : "PHP", "font_size" : "14px", "fill_color" : "#264454" };
+	skillz.create_bubble( "php", opts );
+	opts = { "xx":710, "yy": 328, "r": 20, "out_text" : "Dot Net\n(ASP, VB)", "font_size" : "8px", "fill_color" : "#264454" };
+	skillz.create_bubble( "net", opts );
+	opts = { "xx":380, "yy": 160, "r": 25, "out_text" : "Ruby", "font_size" : "14px", "fill_color" : "#264454" };
+	skillz.create_bubble( "ruby", opts );
+	opts = { "xx":430, "yy": 135, "r":25, "out_text" : "Ruby \non Rails", "font_size" : "10px", "fill_color" : "#264454" };
+	skillz.create_bubble( "rails", opts );
+	opts = { "xx":690, "yy": 380, "r":20, "out_text" : "Python", "font_size" : "10px", "fill_color" : "#264454" };
+	skillz.create_bubble( "python", opts );
+	opts = { "xx":760, "yy": 280, "r":20, "out_text" : "Pascal \n/Delphi", "font_size" : "10px", "fill_color" : "#264454" };
+	skillz.create_bubble( "pascal", opts );
+	opts = { "xx":500, "yy": 500, "r": 20, "out_text" : "T-SQL", "font_size" : "10px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "tsql", opts );
+	opts = { "xx":280, "yy": 480, "r": 50, "out_text" : "MySQL", "font_size" : "14px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "mysql", opts );
+	opts = { "xx":200, "yy": 400, "r": 25, "out_text" : "Neo4J", "font_size" : "13px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "neo4j", opts );
+	opts = { "xx":720, "yy": 480, "r": 50, "out_text" : "4D\n(SQL)", "font_size" : "13px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "4d", opts );
+	opts = { "xx":110, "yy": 380, "r": 50, "out_text" : "R", "font_size" : "14px", "fill_color" : "#4D2654" };
+	skillz.create_bubble( "r", opts );
+
+	//Connect all the things
+	skillz.connect_bubble("juan",["js","php","mysql"], { "line_weight" : "20px"});
+	skillz.connect_bubble("juan",["css","html","pascal","tsql","4d"], { "line_weight" : "10px"});
+	skillz.connect_bubble("juan",["r","net"], { "line_weight" : "5px"});
+	skillz.connect_bubble("juan",["ruby","python","neo4j"], { "line_weight" : "2px"});
+	//connect all the sub things
+	skillz.connect_bubble("js", "jquery", { "line_weight" : "18px"});
+	skillz.connect_bubble("js", "nodejs", { "line_weight" : "5px"});
+	skillz.connect_bubble("ruby", "rails", { "line_weight" : "1px"});
 </script>
 </body>
 </html>
