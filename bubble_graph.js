@@ -37,12 +37,12 @@ function Bubble_Graph( Raph, debug )
 		defaults.text_color = '#ffffff';
 
 		//fill_color, stroke_color, line_weight
-		defaults.fill_color = "#444444";
+		defaults.fill_color = "#333333";
 		defaults.stroke_color = "#444444";
-		defaults.line_weight = "3px";
+		defaults.line_weight = "2px";
 
 		//font_family, font_size, font_weight
-		defaults.font_family = "sans-serif";
+		defaults.font_family = "";//use CSS default
 		defaults.font_size = "10px";
 		defaults.font_weight = "500";
 
@@ -182,8 +182,6 @@ function Bubble_Graph( Raph, debug )
 		//create line
 		this.shapes[code] = this.Raph.path( line_string ).toBack();
 
-		console.log(this.shapes[code]);
-
 		this.shapes[code].attr(
 		{
 			"fill" : "none"
@@ -234,14 +232,15 @@ function Bubble_Graph( Raph, debug )
 		checked_opts.font_size = ( options_to_check.hasOwnProperty("font_size") ) ? options_to_check.font_size : defaults.font_size;
 		checked_opts.font_weight = ( options_to_check.hasOwnProperty("font_weight") ) ? options_to_check.font_weight : defaults.font_weight;
 		//line_start.xx, line_start.yy, line_points[]
-		if ( !(options_to_check.hasOwnProperty("line_start")) )
+		if ( options_to_check.hasOwnProperty("line_start") )
 		{
-			checked_opts.line_start = defaults.line_start;
+			checked_opts.line_start = {};
+			checked_opts.line_start.xx = ( options_to_check.line_start.hasOwnProperty("xx") ) ? options_to_check.line_start.xx : defaults.line_start.xx;
+			checked_opts.line_start.yy = ( options_to_check.line_start.hasOwnProperty("yy") ) ? options_to_check.line_start.yy : defaults.line_start.yy;
 		}
 		else
 		{
-			checked_opts.line_start.xx = ( options_to_check.line_start.hasOwnProperty("xx") ) ? options_to_check.line_start.xx : defaults.line_start.xx;
-			checked_opts.line_start.yy = ( options_to_check.line_start.hasOwnProperty("yy") ) ? options_to_check.line_start.yy : defaults.line_start.yy;
+			checked_opts.line_start = defaults.line_start;
 		}
 		checked_opts.line_points = ( options_to_check.hasOwnProperty("line_points") ) ? options_to_check.line_points : defaults.line_points;
 
@@ -293,6 +292,7 @@ function Bubble_Graph( Raph, debug )
 		//not sure if I like this...
 		response = (typeof shape_obj != "object" ) ? false : shape_obj ;
 
+		logger("Done creating shape.");
 		return response;
 	}
 
@@ -301,59 +301,87 @@ function Bubble_Graph( Raph, debug )
 	 * @return boolean true = done
 	 * 
 	 */
-	this.connect_bubble = function( objects_to_connect )
+	this.connect_bubble = function()
 	{
-		//get shape objects
-		/*
-		object example
-
+		var parent_obj, cur_child, cur_set, points_obj, line_code, opts, attrs, args, children_list, objects_to_connect;
+		//determine arguments
+		args = Array.prototype.slice.call(arguments);
+		//verify some args were passed
+		if ( args.length > 0 )
 		{
-			"sets":
-			[
+			//check if object
+			if (typeof args[0] == "object" )
+			{
+				objects_to_connect = args[0];
+			}
+			else
+			{
+				//passed strings, process data
+				if ( typeof args[1] == "object" )
 				{
-					"parent":"MEH"
-					, "children":["A","B","C"]
+					children_list = ( args.hasOwnProperty(1) ) ? args[1] : {} ;
 				}
-			]
-			, "attrs" :
-			{}
+				else if ( typeof args[1] == "string" )
+				{
+					children_list = new Array();
+					children_list.push(( args.hasOwnProperty(1) ) ? args[1] : {} );
+				}
+				
+				attrs = ( args.hasOwnProperty(2) ) ? args[2] : {} ;
+				attrs = check_shape_opts( attrs );
+
+				//create object
+				objects_to_connect = 
+				{
+					"sets" :
+					[
+						{
+							"parent" : args[0]
+							, "children" : children_list
+							, "attrs" : attrs
+						}
+					]
+				};
+
+			}
 		}
+		else return false;
 
-		*/
-
-		var parent_obj, cur_child, this_set, points_obj, line_code, opts;
-
-
+		//process object
 		for(set in objects_to_connect.sets)
 		{
 			points_obj = {};
-			points_obj.attrs = (objects_to_connect.hasOwnProperty("attrs") ) ? objects_to_connect.attrs : defaults ;
 
-			this_set = objects_to_connect.sets[set];
+			//@todo
+			//Each set will have it's own hierarchal attributes. Then, each "connection" will also have it's own attributes
+			//This allows fine control over attributes of objects.
+			//points_obj.attrs = (objects_to_connect.hasOwnProperty("attrs") ) ? objects_to_connect.attrs : defaults ;
+
+			cur_set = objects_to_connect.sets[set];
 			//get parent object
-			parent_obj = this.shapes[this_set["parent"]];
-			console.log(parent_obj);
+			parent_obj = this.shapes[cur_set["parent"]];
+			
 			//get first center pt, save pts to object
 			points_obj.line_start = {};
 			points_obj.line_start.xx = parent_obj.attr("x");
 			points_obj.line_start.yy = parent_obj.attr("y");
 
 			points_obj.line_points = [];
+			attrs = (cur_set.hasOwnProperty("attrs") ) ? cur_set.attrs : {} ;
+			points_obj.attrs = check_shape_opts( attrs );
 
-			//get children points
-			for(child in this_set["children"])
+			//process array
+			for(child in cur_set["children"])
 			{
-				cur_child = this.shapes[this_set["children"][child]];
+				logger(cur_set["children"][child]);
+				cur_child = this.shapes[cur_set["children"][child]];
 
-				console.log(cur_child);
-
-				line_code = this_set["parent"] + "_to_" + this_set["children"][child];
+				line_code = cur_set["parent"] + "_to_" + cur_set["children"][child];
 
 				//get children center pts, save pts to object
 				opts = { "xx" : cur_child.attr("x"), "yy" : cur_child.attr("y") };
 				points_obj.line_points.push( opts );
-				console.log(points_obj)
-
+				
 				//@TODO make sure line weight is not greater than shape diameter/width
 
 				//create line(s)
@@ -364,11 +392,12 @@ function Bubble_Graph( Raph, debug )
 			
 
 			//clear
-			this_set = null;
+			cur_set = null;
 			parent_obj = null;
 			children_obj = null;
 
 		}
+		logger("Done creating shape(s).");
 
 		return true;
 	}
