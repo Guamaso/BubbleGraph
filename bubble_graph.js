@@ -4,14 +4,14 @@
 
 
 
-function Bubble_Graph( Raph, debug )
+function Bubble_Graph(Raph, debug)
 {
-	//this.db = new local_data( true );
-	this.db = '';
 	var defaults = '';
 	//constructor
 	function init( Raph, debug )
 	{
+		module_info = {"version":"2.4.0"};
+
 		defaults = {};
 		if ( typeof debug == "undefined") var debug = false;
 		debug = ( typeof debug == "boolean" ) ? debug : false;
@@ -69,14 +69,19 @@ function Bubble_Graph( Raph, debug )
 		{
 			case "log":
 				//appends to the log string in localstorage
-				var test = this.db.update( prefix + '_log','-[TS:'+ time_stamp() +'] ' + msg );
+				console.log( prefix + ':' );
+				console.log( msg );
+				console.log( '/' + prefix );
 
 			break;
 			case "alert":
 				alert( msg );
 			break;
 			default:
-				console.log( prefix + ': ' + msg );
+                //TODO: Should do nothing, but does same as LOG for now...
+				console.log( prefix + ':' );
+				console.log( msg );
+				console.log( '/' + prefix );
 			break;
 		}
 	}
