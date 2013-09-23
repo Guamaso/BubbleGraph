@@ -9,6 +9,10 @@ Created by Me, Juan Orozco thereabouts the 20th of December, 2012.
 Bubbles can have relationships where data can dictate the size and color of the bubbles as well as the connector that relates the bubbles together. You can see a sketch of the final result here:
 [Idea Sketch](https://www.dropbox.com/s/yt8tatbq3rd3k1d/sketch.jpg)
 
+Fancy. I know.
+
+Check out `bubble_graph_test.html` as well. It explains much.
+
 
 ###Update Notes
 
